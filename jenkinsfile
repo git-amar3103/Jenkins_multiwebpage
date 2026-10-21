@@ -1,0 +1,68 @@
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out website source code...'
+                checkout scm
+            }
+        }
+
+        stage('Validate Files') {
+            steps {
+                echo 'Validating website files...'
+                sh '''
+                    set -eu
+                    for file in index.html about.html services.html contact.html style.css
+                    do
+                        if [ ! -f "$file" ]; then
+                            echo "Missing file: $file"
+                            exit 1
+                        fi
+                        echo "Found: $file"
+                    done
+                '''
+            }
+        }
+
+        stage('HTML Validation') {
+            steps {
+                sh '''
+                    set -eu
+                    for file in index.html about.html services.html contact.html
+                    do
+                        grep -qi '<html' "$file"
+                        grep -qi '</html>' "$file"
+                        echo "Basic HTML check passed: $file"
+                    done
+                '''
+            }
+        }
+
+        stage('Package Website') {
+            steps {
+                sh '''
+                    set -eu
+                    mkdir -p dist
+                    cp index.html about.html services.html contact.html style.css dist/
+                '''
+                archiveArtifacts artifacts: 'dist/**',
+                                 fingerprint: true
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'SUCCESS: Website pipeline completed!'
+        }
+        failure {
+            echo 'FAILED: Check the Jenkins console output.'
+        }
+        always {
+            echo 'Pipeline execution finished.'
+        }
+    }
+}
