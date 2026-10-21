@@ -5,8 +5,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out website source code...'
-                checkout scm
+                git branch: 'main',
+                    url: 'https://github.com/git-amar3103/Jenkins_Repo.git'
             }
         }
 
