@@ -10,15 +10,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Apache') {
-            steps {
-                sh '''
-                     sudo mkdir -p /var/www/html/multi
-                     sudo cp dist/* /var/www/html/multi/
-                     echo "Multi-page website deployed successfully"
-                    '''
-    }
-}
+
 
         stage('Validate Files') {
             steps {
@@ -63,7 +55,15 @@ pipeline {
             }
         }
     }
-
+        stage('Deploy to Apache') {
+            steps {
+                sh '''
+                     sudo mkdir -p /var/www/html/multi
+                     sudo cp dist/* /var/www/html/multi/
+                     echo "Multi-page website deployed successfully"
+                    '''
+    }
+}
     post {
         success {
             echo 'SUCCESS: Website pipeline completed!'
