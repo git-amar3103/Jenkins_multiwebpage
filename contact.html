@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact Us</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><h1>Contact Us</h1></header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <main>
+    <h2>Send Us a Message</h2>
+
+    <form id="contactForm">
+      <p><input id="name" placeholder="Your name" required></p>
+      <p><input id="email" type="email"
+        placeholder="Your email" required></p>
+      <p><textarea id="message"
+        placeholder="Your message" required></textarea></p>
+      <button type="submit">Send Message</button>
+    </form>
+
+    <p id="result"></p>
+  </main>
+
+  <footer>© 2026 My Website</footer>
+
+  <script>
+    document.getElementById("contactForm")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+        document.getElementById("result").textContent =
+          "Thank you! Your form was filled successfully.";
+        this.reset();
+      });
+  </script>
+</body>
+</html>
