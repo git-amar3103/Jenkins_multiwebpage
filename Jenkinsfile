@@ -5,26 +5,23 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/git-amar3103/Jenkins_Repo.git'
+                echo 'Checking out multi-page website'
+                checkout scm
             }
         }
 
-
-
         stage('Validate Files') {
             steps {
-                echo 'Validating website files...'
                 sh '''
                     set -eu
                     for file in index.html about.html services.html contact.html style.css
                     do
-                        if [ ! -f "$file" ]; then
+                        test -f "$file" || {
                             echo "Missing file: $file"
                             exit 1
-                        fi
-                        echo "Found: $file"
+                        }
                     done
+                    echo "All website files found"
                 '''
             }
         }
@@ -37,8 +34,8 @@ pipeline {
                     do
                         grep -qi '<html' "$file"
                         grep -qi '</html>' "$file"
-                        echo "Basic HTML check passed: $file"
                     done
+                    echo "Basic HTML checks passed"
                 '''
             }
         }
@@ -54,25 +51,33 @@ pipeline {
                                  fingerprint: true
             }
         }
-    }
+
         stage('Deploy to Apache') {
             steps {
                 sh '''
-                     sudo mkdir -p /var/www/html/multi
-                     sudo cp dist/* /var/www/html/multi/
-                     echo "Multi-page website deployed successfully"
-                    '''
+                    set -eu
+                    test -d /var/www/html/multi
+                    cp dist/index.html \
+                       dist/about.html \
+                       dist/services.html \
+                       dist/contact.html \
+                       dist/style.css \
+                       /var/www/html/multi/
+                    echo "Multi-page website deployed successfully"
+                '''
+            }
+        }
     }
-}
+
     post {
         success {
-            echo 'SUCCESS: Website pipeline completed!'
+            echo 'SUCCESS: Website deployed'
         }
         failure {
-            echo 'FAILED: Check the Jenkins console output.'
+            echo 'FAILED: Check Console Output'
         }
         always {
-            echo 'Pipeline execution finished.'
+            echo 'Pipeline execution finished'
         }
     }
 }
